@@ -4,10 +4,7 @@ package fr.studi.game;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.Scanner;
 
 @Getter
 @Setter
@@ -37,7 +34,56 @@ public class Pendu {
     }
 
     public void jouer(){
-        this.afficherMotCourant();
+        Scanner scanner = new Scanner(System.in);
+
+        // si mon nombre d'erreur actuel est inférieur au nbr max
+        // je peux jouer
+        while(erreur < maxErreur){
+
+            //rappel des précédentes information
+            afficherMotCourant();
+            afficherLettresUtilisees();
+            afficherErreur();
+
+            System.out.println("Entrez une lettre : ");
+            char lettreSaisie = scanner.next().toLowerCase()
+                    .charAt(0);
+
+            //verification de la légitimité de la lettre
+            if(estLettreValide(lettreSaisie) && !lettresUtilisees.toString().contains(String.valueOf(lettreSaisie))){
+                lettresUtilisees.append(lettreSaisie);
+                if(mot.contains(String.valueOf(lettreSaisie))){
+                    mettreAJourMotCourant(lettreSaisie);
+                } else {
+                    erreur++; // erreur = erreur + 1;
+                }
+            }else {
+                System.out.println("Lettre invalide ou déjà utilisée. Réessayez.");
+            }
+
+            //affichage d'une phrase si j'ai trouvé le mot
+            if (motCourant.toString().equals(mot)){
+                afficherMotCourant();
+                System.out.println("Bravo, vous avez gagné !");
+                System.exit(0);
+            }
+        }
+
+            // affichage d'une phrase indiquant que j'ai perdu
+            System.out.println("Désolé, vous avez perdu, le mot etait : " + mot);
+            scanner.close();
+    }
+
+    private void afficherErreur() {
+        System.out.println("Vous avez " + erreur + " erreurs sur " + maxErreur + ".");
+    }
+
+    private void mettreAJourMotCourant(char lettreSaisie) {
+        for(int i = 0; i < mot.length(); i ++){
+            if(mot.charAt(i) == lettreSaisie ){
+                motCourant.setCharAt(i,lettreSaisie);
+            }
+        }
     }
 
     private void afficherMotCourant(){
@@ -62,7 +108,7 @@ public class Pendu {
     }
 
     private void afficherLettresUtilisees(){
-        System.out.println(" Les lettres utilisées , sont : " + this.lettresUtilisees.toString());
+        System.out.println("Les lettres déjà utilisées , sont : " + this.lettresUtilisees.toString());
     }
 
     private boolean estLettreValide(char lettre){

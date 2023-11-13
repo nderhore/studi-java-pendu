@@ -26,7 +26,7 @@ public class App
         String mot = scanner.next();
         System.out.println("Entrez le nombre d'erreur maximum : ");
         int erreur = checkInput(scanner);
-        Pendu jeuPendu = new Pendu(mot,erreur);
+        Pendu jeuPendu = new Pendu(mot.toLowerCase(),erreur);
         jeuPendu.jouer();
     }
 
