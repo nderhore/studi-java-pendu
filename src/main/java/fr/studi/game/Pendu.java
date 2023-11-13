@@ -1,6 +1,9 @@
 package fr.studi.game;
 
 
+import fr.studi.dao.ScoreDAO;
+import fr.studi.dao.impl.ScoreDAOImpl;
+import fr.studi.pojo.Score;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -65,6 +68,11 @@ public class Pendu {
             if (motCourant.toString().equals(mot)){
                 afficherMotCourant();
                 System.out.println("Bravo, vous avez gagné !");
+                //sauvegarde du score
+                ScoreDAO scoreDAO = new ScoreDAOImpl();
+                System.out.println("entrez votre pseudo : ");
+                String pseudo = scanner.next();
+                scoreDAO.sauvegarderScore(new Score(erreur,pseudo));
                 System.exit(0);
             }
         }
