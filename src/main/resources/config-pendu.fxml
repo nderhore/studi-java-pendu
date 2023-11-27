@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.geometry.Insets?>
+
+<GridPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.studi.controller.ConfigPendu">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10" />
+    </padding>
+
+    <Label text="Configuration du jeu" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+    <TextField fx:id="wordInput" promptText="Entrez le mot à deviner" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+    <TextField fx:id="errorInput" promptText="Entrez le nombre d'erreurs autorisées" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+
+    <Button text="Valider" onAction="#validerConfiguration" GridPane.columnIndex="3" GridPane.rowIndex="5"/>
+</GridPane>
