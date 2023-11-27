@@ -1,15 +1,17 @@
 package fr.studi;
 
+import fr.studi.controller.ConfigPendu;
+import fr.studi.controller.JeuPendu;
 import fr.studi.game.Pendu;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -19,15 +21,6 @@ import java.util.Scanner;
  */
 public class App extends Application
 {
-    private static void initializeGame() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Entrez le mot à trouver : ");
-        String mot = scanner.next();
-        System.out.println("Entrez le nombre d'erreur maximum : ");
-        int erreur = checkInput(scanner);
-        Pendu jeuPendu = new Pendu(mot.toLowerCase(),erreur);
-        jeuPendu.jouer();
-    }
 
     private static int checkInput(Scanner scanner){
         int reponse = 0;
@@ -46,17 +39,55 @@ public class App extends Application
 
     @Override
     public void start(Stage stage) throws Exception {
-        stage.setTitle("Jeu du Pendu");
+        ConfigPendu configPendu = displayConfigScreen();
 
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/pendu-gui.fxml"));
-        Parent root = loader.load();
-        Scene scene = new Scene(root,300,400);
-        stage.setScene(scene);
-        stage.show();
+        if(configPendu != null && configPendu.isConfigValid()){
+            displayPrincipalScreen(stage,configPendu.getWord(), configPendu.getErrorAuthorized());
+        } else{
+            // le joueur a annulé sa configuration, ou, config incorrecte
+            stage.close();
+        }
 
-        //initializeGame();
+    }
 
+    private void displayPrincipalScreen(Stage primaryStage,
+                                        String word,
+                                        int error) {
+        try{
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/jeu-pendu.fxml"));
+            Parent root = loader.load();
+            JeuPendu penduController = loader.getController();
+            penduController.setPendu(new Pendu(word,error));
+
+            Scene scene = new Scene(root,400,200);
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Jeu du pendu");
+            primaryStage.show();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private ConfigPendu displayConfigScreen(){
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/config-pendu.fxml"));
+            Parent root = loader.load();
+
+            Stage configStage = new Stage();
+            configStage.initModality(Modality.APPLICATION_MODAL);
+            configStage.setTitle("Configuration du jeu");
+            configStage.setScene(new Scene(root));
+
+            ConfigPendu configPendu = loader.getController();
+            configStage.showAndWait();
+
+            return configPendu;
+        } catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
