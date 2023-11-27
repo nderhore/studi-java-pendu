@@ -28,30 +28,18 @@ public class Pendu {
     // lettre qui ont été saisies
     private StringBuilder lettresUtilisees;
 
+    private boolean gamewin;
+
     public Pendu(String mot, int erreur){
         this.mot = mot;
         this.erreur = 0;
         this.lettresUtilisees = new StringBuilder();
         this.maxErreur = erreur;
         this.motCourant = new StringBuilder("_".repeat(mot.length()));
+        this.gamewin = false;
     }
 
-    public void jouer(){
-        Scanner scanner = new Scanner(System.in);
-
-        // si mon nombre d'erreur actuel est inférieur au nbr max
-        // je peux jouer
-        while(erreur < maxErreur){
-
-            //rappel des précédentes information
-            afficherMotCourant();
-            afficherLettresUtilisees();
-            afficherErreur();
-
-            System.out.println("Entrez une lettre : ");
-            char lettreSaisie = scanner.next().toLowerCase()
-                    .charAt(0);
-
+    public void setLetter(char lettreSaisie){
             //verification de la légitimité de la lettre
             if(estLettreValide(lettreSaisie) && !lettresUtilisees.toString().contains(String.valueOf(lettreSaisie))){
                 lettresUtilisees.append(lettreSaisie);
@@ -66,24 +54,17 @@ public class Pendu {
 
             //affichage d'une phrase si j'ai trouvé le mot
             if (motCourant.toString().equals(mot)){
-                afficherMotCourant();
-                System.out.println("Bravo, vous avez gagné !");
-                //sauvegarde du score
-                ScoreDAO scoreDAO = new ScoreDAOImpl();
+                this.gamewin = true;
+                /*ScoreDAO scoreDAO = new ScoreDAOImpl();
                 System.out.println("entrez votre pseudo : ");
                 String pseudo = scanner.next();
-                scoreDAO.sauvegarderScore(new Score(erreur,pseudo));
-                System.exit(0);
+                scoreDAO.sauvegarderScore(new Score(erreur,pseudo));*/
             }
         }
 
-            // affichage d'une phrase indiquant que j'ai perdu
-            System.out.println("Désolé, vous avez perdu, le mot etait : " + mot);
-            scanner.close();
-    }
 
-    private void afficherErreur() {
-        System.out.println("Vous avez " + erreur + " erreurs sur " + maxErreur + ".");
+    public  String afficherErreur() {
+        return ("Vous avez " + erreur + " erreurs sur " + maxErreur + ".");
     }
 
     private void mettreAJourMotCourant(char lettreSaisie) {
@@ -94,14 +75,8 @@ public class Pendu {
         }
     }
 
-    private void afficherMotCourant(){
+    public String afficherMotCourantAvecVirgule(){
 
-        //en une ligne
-        /*System.out.println("Le mot actuel est : " + IntStream.range(0,motCourant.length())
-                .mapToObj(index -> motCourant.charAt(index) + ( index < motCourant.length() - 1 ? " ," : ""))
-                .collect(Collectors.joining()));*/
-
-        //en plusieurs ligne
         StringBuilder motAvecVirgule  = new StringBuilder();
         for(int i = 0; i<motCourant.length() ; i++){
             char lettre = this.motCourant.charAt(i);
@@ -111,16 +86,15 @@ public class Pendu {
                 motAvecVirgule.append(",");
             }
         }
-        System.out.println("Le mot actuel est : " + motAvecVirgule);
+        return motAvecVirgule.toString();
 
     }
 
-    private void afficherLettresUtilisees(){
-        System.out.println("Les lettres déjà utilisées , sont : " + this.lettresUtilisees.toString());
+    public boolean estLettreValide(char lettre){
+        return Character.isLetter(lettre) && !lettresUtilisees.toString().contains(String.valueOf(lettre));
     }
 
-    private boolean estLettreValide(char lettre){
-        return Character.isLetter(lettre);
+    public boolean gameWin() {
+        return this.gamewin;
     }
-
 }
